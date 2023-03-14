@@ -43,14 +43,14 @@ class SongSchema(ma.Schema):
     release_date = fields.Date(required=True)
     genre = fields.String(required=True)
     @post_load
-    def create_song(self, data, **kwargs):
+    def create_song(self, data):
         return MusicLibrary(**data)
     
     class Meta:
         fields = "id", "title", "artist", "album", "release_date", "genre"
 
 music_library = MusicLibrary()
-music_librarys = MusicLibrary(many=True)
+music_librarys = MusicLibrary()
 # Resources
 class Music_Library_Resource(Resource):
       def get(self):
