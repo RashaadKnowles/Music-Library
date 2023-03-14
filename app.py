@@ -96,5 +96,5 @@ class MusicResource(Resource):
 
 
 # Routes
-api.add_resource(Music_Library_Resource,'api/songs')
-api.add_resource(MusicResource, 'api/songs/<int:pk>')
+api.add_resource(Music_Library_Resource,'/api/songs')
+api.add_resource(MusicResource, '/api/songs/<int:pk>')
