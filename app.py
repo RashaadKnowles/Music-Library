@@ -24,7 +24,7 @@ CORS(app)
 Migrate(app, db)
 
 # Models
-class MusicLibrary(db.Model):
+class Song(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(225), nullable=False)
     artist = db.Column(db.String(225), nullable=False)
@@ -44,17 +44,17 @@ class SongSchema(ma.Schema):
     genre = fields.String(required=True)
     @post_load
     def create_song(self, data):
-        return MusicLibrary(**data)
+        return Song(**data)
     
     class Meta:
         fields = "id", "title", "artist", "album", "release_date", "genre"
 
-music_library = MusicLibrary()
-music_librarys = MusicLibrary()
+music_library = SongSchema()
+music_librarys = SongSchema(many=True)
 # Resources
 class Music_Library_Resource(Resource):
       def get(self):
-        all_music = SongSchema.query.all()
+        all_music = Song.query.all()
         return music_librarys.dump(all_music), 200
       
 
@@ -64,22 +64,22 @@ class Music_Library_Resource(Resource):
             new_music = music_library.load(form_data)
             db.session.add(new_music)
             db.session.commit()
-            db.session.dump(new_music), 201
+            return db.session.dump(new_music), 201
         except ValidationError as err:
             return err.messages, 400
         
 class MusicResource(Resource):
      def get(self, music_id):
-        music_from_db = MusicLibrary.query.get_or_404(music_id)
+        music_from_db = Song.query.get_or_404(music_id)
         return music_library.dump(music_from_db)
 
      def delete(self, music_id):
-        music_from_db = MusicLibrary.query.get_or_404(music_id)
+        music_from_db = Song.query.get_or_404(music_id)
         db.session.delete(music_from_db)
         return "", 204
 
      def put(self, music_id):
-        music_from_db = MusicLibrary.query.get_or_404(music_id)
+        music_from_db = Song.query.get_or_404(music_id)
         if "title" in request.json:
             music_from_db.title = request.json['title']
         if "artist" in request.json:
